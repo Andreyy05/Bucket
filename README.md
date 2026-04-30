@@ -1,80 +1,54 @@
-# 🌟 Bucket (Full-Stack Bucket List App)
+# Bucket
 
-**Bucket** je moderní full-stack webová aplikace navržená pro zaznamenávání, správu a vizualizaci vašich životních snů a cílů (Bucket List). Pomůže vám udržet si přehled o tom, co chcete zažít, a motivuje vás pomocí vizuálních ukazatelů vašeho pokroku.
+Bucket je jednoducha full-stack webova aplikace, ktera vam pomuze udrzet si prehled o vasich zivotnich snech a cilech. Slouzi jako takovy digitalni "bucket list". Muzete si sem zapisovat veci, ktere chcete zazit, radit si je do kategorii a sledovat svuj celkovy pokrok.
 
-![Bucket App Screenshot](https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/compass.svg) <!-- Zde můžete později vložit reálný screenshot z aplikace -->
+## Co aplikace umi
 
-## 🚀 Hlavní Funkce
+Aplikace ma nekolik zakladnich, ale uzitecnych funkci:
+- Zapisovani a odskrtavani cilu.
+- Tvorba vlastnich kategorii, kterym muzete priradit barvu a ikonku pro lepsi prehlednost.
+- Vizualni zobrazeni vaseho pokroku pomoci kruhoveho grafu, ktery se prepocitava podle toho, kolik cilu mate hotovych.
+- Filtrovani cilu podle vybranych kategorii.
 
-*   **Správa cílů (CRUD):** Přidávejte, odškrtávejte a mazejte své životní cíle. Všechna data jsou bezpečně uložena na vlastním backendu v databázi.
-*   **Vlastní Kategorie:** Roztřiďte si své sny. Můžete si vytvářet vlastní, plně dynamické kategorie. Každé kategorii můžete přiřadit specifický název, unikátní barvu a odpovídající ikonku pro snadnou vizuální orientaci.
-*   **Motivační Dashboard:** Hlavní obrazovka obsahuje krásný interaktivní a plynule animovaný **kruhový graf (Donut Chart)**. Tento graf okamžitě počítá a vizualizuje celkový poměr mezi aktivními a splněnými úkoly, čímž vás pohání k dalším zážitkům.
-*   **Rychlé Filtrování:** Přepínejte si zobrazení svých cílů pomocí filtračních tlačítek podle zvolených kategorií jedním kliknutím.
+Vsechna data se ukladaji na lokalni server do SQLite databaze, takze po vypnuti prohlizece o nic neprijdete.
 
-## 🛠 Technologie
+## Pouzite technologie
 
-Aplikace je rozdělena na dvě úzce spolupracující části:
+Aplikace se sklada z frontendu a backendu.
 
-### Frontend
-*   **React 18** (UI Knihovna)
-*   **TypeScript** (Bezpečnost typů a robustnost)
-*   **Vite** (Bleskově rychlý build nástroj a vývojový server)
-*   **Vanilla CSS** s CSS proměnnými (Moderní, čistý a konzistentní design s důrazem na hover efekty a plynulé animace)
-*   **Lucide React** (Sada moderních a čistých ikon pro UI)
+Pro frontend (uzivatelske rozhrani) jsme pouzili:
+- React 18 s TypeScriptem
+- Vite pro rychle sestaveni a beh
+- Vanilla CSS pro vzhled (s durazem na plynule animace)
 
-### Backend
-*   **Node.js** & **Express.js** (Server a RESTful API)
-*   **SQLite3** (Lehká databáze bez nutnosti instalace pro uchování cílů a kategorií)
+Pro backend (ukladani dat) jsme pouzili:
+- Node.js s frameworkem Express.js
+- SQLite3 pro ukladani databaze do lokalniho souboru
 
-## 📦 Lokální spuštění a vývoj
+## Jak aplikaci spustit u sebe
 
-Pro spuštění celého "Full-Stack" ekosystému je potřeba stáhnout závislosti a spustit současně backendový i frontendový server.
+Pokud si chcete aplikaci spustit na svem pocitaci, staci dodrzet par kroku. Budete k tomu potrebovat nainstalovany Node.js.
 
-### 1. Instalace
-Ujistěte se, že máte nainstalovaný [Node.js](https://nodejs.org/). Naklonujte si tento repozitář a nainstalujte závislosti:
+1. Nejprve si stahnete repozitar a nainstalujte zavislosti.
+   Otevrete terminal ve slozce s projektem a napiste:
+   ```bash
+   npm install
+   ```
 
-```bash
-git clone <url-repozitare>
-cd Bucket
-npm install
-```
+2. Spustte backendovy server.
+   Backend se postara o praci s databazi. Zrustane bezet v tomto terminalu:
+   ```bash
+   node server/index.js
+   ```
 
-### 2. Spuštění Backend Serveru (API + Databáze)
-Express API server běží odděleně (standardně na portu 3000) a stará se o SQLite databázi (`server/data/database.sqlite`). Při prvním spuštění se databáze sama vytvoří a naplní výchozími kategoriemi.
-Otevřete si první okno terminálu a spusťte:
+3. Spustte frontend.
+   Otevrete si druhe (nove) okno terminalu ve stejne slozce a spustte samotnou webovou aplikaci:
+   ```bash
+   npm run dev
+   ```
 
-```bash
-node server/index.js
-```
-*(Server by měl vypsat: "Server running on port 3000" a "Connected to SQLite database.")*
+Pote uz jen otevrete webovy prohlizec a jdete na adresu http://localhost:5173/. Aplikace bude pripravena k pouziti. Pri prvnim spusteni se databaze sama zalozi a predvyplni zakladnimi kategoriemi.
 
-### 3. Spuštění Frontend Serveru (React + Vite)
-Otevřete si **nové (druhé) okno terminálu** ve složce projektu a spusťte Vite vývojový server. Vite obsahuje nakonfigurovanou proxy, která se automaticky postará o směrování požadavků (začínající `/api/*`) na náš backend.
+## O projektu
 
-```bash
-npm run dev
-```
-
-Aplikace bude následně dostupná ve vašem prohlížeči na adrese: **http://localhost:5173/**
-
-## 📁 Struktura Projektu
-
-```text
-Bucket/
-├── server/
-│   ├── data/
-│   │   └── database.sqlite   # Vaše data
-│   ├── db.js                 # Inicializace databáze a schémat (Goals, Categories)
-│   └── index.js              # Express.js server a REST API endpointy
-├── src/
-│   ├── components/           # UI Komponenty (AddGoalForm, ProgressChart, ManageCategories...)
-│   ├── App.tsx               # Hlavní kontejner aplikace
-│   ├── index.css             # Centrální Design Systém a stylování
-│   ├── main.tsx              # React entry point
-│   └── types.ts              # TypeScript interface definice (Goal, Category)
-├── vite.config.ts            # Nastavení bundleru a API proxy
-└── package.json              # Závislosti projektu
-```
-
----
-*Vytvořeno s radostí pro všechny, kteří chtějí proměnit své sny ve skutečnost.*
+Tento projekt slouzi jako jednoducha a funkcni ukazka toho, jak propojit React na frontendu s vlastnim Node.js API a databazi.
