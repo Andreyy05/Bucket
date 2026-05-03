@@ -14,14 +14,14 @@ export const GoalItem: React.FC<GoalItemProps> = ({ goal, category, onToggle, on
   const IconComponent = category ? (Icons as any)[category.icon] : null;
 
   return (
-    <div className={`goal-item ${goal.completed ? 'completed' : ''}`}>
+    <div className={`goal-item ${goal.state === 'completed' ? 'completed' : ''}`}>
       <div className="goal-content">
         <button 
-          className={`btn-icon ${goal.completed ? 'btn-success' : ''}`}
+          className={`btn-icon ${goal.state === 'completed' ? 'btn-success' : ''}`}
           onClick={() => onToggle(goal.id)}
-          aria-label={goal.completed ? 'Označit jako nesplněné' : 'Označit jako splněné'}
+          aria-label={goal.state === 'completed' ? 'Označit jako nesplněné' : 'Označit jako splněné'}
         >
-          {goal.completed ? <CheckCircle size={24} /> : <Circle size={24} />}
+          {goal.state === 'completed' ? <CheckCircle size={24} /> : <Circle size={24} />}
         </button>
         <div>
           <div className="goal-title">{goal.title}</div>

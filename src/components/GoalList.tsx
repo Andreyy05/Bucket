@@ -21,10 +21,10 @@ export const GoalList: React.FC<GoalListProps> = ({ goals, categories, onToggle,
   }
 
   const sortedGoals = [...goals].sort((a, b) => {
-    if (a.completed === b.completed) {
+    if (a.state === b.state) {
       return b.createdAt - a.createdAt;
     }
-    return a.completed ? 1 : -1;
+    return a.state === 'completed' ? 1 : -1;
   });
 
   return (

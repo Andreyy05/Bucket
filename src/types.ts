@@ -9,6 +9,6 @@ export interface Goal {
   id: string;
   title: string;
   categoryId: string;
-  completed: boolean;
+  state: 'active' | 'completed';
   createdAt: number;
 }

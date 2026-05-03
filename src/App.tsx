@@ -26,8 +26,8 @@ function App() {
         const goalsData = await goalsRes.json();
         const catData = await catRes.json();
         
-        setGoals(goalsData);
-        setCategories(catData);
+        setGoals(goalsData.itemList || []);
+        setCategories(catData.itemList || []);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -42,7 +42,7 @@ function App() {
       id: uuidv4(),
       title,
       categoryId,
-      completed: false,
+      state: 'active',
       createdAt: Date.now(),
     };
 
@@ -66,7 +66,7 @@ function App() {
 
     setGoals((prev) => 
       prev.map(g => 
-        g.id === id ? { ...g, completed: !g.completed } : g
+        g.id === id ? { ...g, state: g.state === 'active' ? 'completed' : 'active' } : g
       )
     );
 
@@ -74,13 +74,13 @@ function App() {
       await fetch(`/api/goals/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: !goal.completed })
+        body: JSON.stringify({ state: goal.state === 'active' ? 'completed' : 'active' })
       });
     } catch (error) {
       console.error('Error toggling goal:', error);
       setGoals((prev) => 
         prev.map(g => 
-          g.id === id ? { ...g, completed: goal.completed } : g
+          g.id === id ? { ...g, state: goal.state } : g
         )
       );
     }
@@ -115,7 +115,7 @@ function App() {
     setCategories(prev => [...prev, createdCat]);
   };
 
-  const completedCount = goals.filter(g => g.completed).length;
+  const completedCount = goals.filter(g => g.state === 'completed').length;
   
   const filteredGoals = filterCategoryId === null 
     ? goals 

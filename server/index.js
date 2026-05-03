@@ -8,75 +8,98 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+import categoryListAbl from './abl/category/listAbl.js';
+import categoryCreateAbl from './abl/category/createAbl.js';
+
 // --- CATEGORIES API ---
-app.get('/api/categories', (req, res) => {
-  db.all('SELECT * FROM categories', [], (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+app.get('/api/categories', async (req, res) => {
+  try {
+    const response = await categoryListAbl.execute(req.query);
+    res.json(response);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        params: error.params
+      });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-    res.json(rows);
-  });
+  }
 });
 
-app.post('/api/categories', (req, res) => {
-  const { id, name, icon, color } = req.body;
-  db.run(
-    'INSERT INTO categories (id, name, icon, color) VALUES (?, ?, ?, ?)',
-    [id, name, icon, color],
-    function(err) {
-      if (err) {
-        if (err.message.includes('UNIQUE constraint failed')) {
-          return res.status(400).json({ error: 'Kategorie s tímto názvem již existuje.' });
-        }
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(201).json({ id, name, icon, color });
+app.post('/api/categories', async (req, res) => {
+  try {
+    const response = await categoryCreateAbl.execute(req.body);
+    res.status(201).json(response);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        params: error.params
+      });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-  );
+  }
 });
 
-// --- GOALS API ---
-app.get('/api/goals', (req, res) => {
-  db.all('SELECT * FROM goals ORDER BY createdAt DESC', [], (err, rows) => {
-    if (err) {
-      return res.status(500).json({ error: err.message });
+import listAbl from './abl/goal/listAbl.js';
+import updateAbl from './abl/goal/updateAbl.js';
+import createAbl from './abl/goal/createAbl.js';
+import { CustomError } from './utils/errors.js';
+
+app.get('/api/goals', async (req, res) => {
+  try {
+    const response = await listAbl.execute(req.query);
+    res.json(response);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        params: error.params
+      });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-    const goals = rows.map(row => ({
-      ...row,
-      completed: row.completed === 1
-    }));
-    res.json(goals);
-  });
+  }
 });
 
-app.post('/api/goals', (req, res) => {
-  // Now expect categoryId instead of category string
-  const { id, title, categoryId, completed, createdAt } = req.body;
-  db.run(
-    'INSERT INTO goals (id, title, categoryId, completed, createdAt) VALUES (?, ?, ?, ?, ?)',
-    [id, title, categoryId, completed ? 1 : 0, createdAt],
-    function(err) {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.status(201).json({ id, title, categoryId, completed, createdAt });
+app.post('/api/goals', async (req, res) => {
+  try {
+    const response = await createAbl.execute(req.body);
+    res.status(201).json(response);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        params: error.params
+      });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-  );
+  }
 });
 
-app.put('/api/goals/:id', (req, res) => {
-  const { id } = req.params;
-  const { completed } = req.body;
-  db.run(
-    'UPDATE goals SET completed = ? WHERE id = ?',
-    [completed ? 1 : 0, id],
-    function(err) {
-      if (err) {
-        return res.status(500).json({ error: err.message });
-      }
-      res.json({ success: true });
+app.put('/api/goals/:id', async (req, res) => {
+  try {
+    const response = await updateAbl.execute({ id: req.params.id, ...req.body });
+    res.json(response);
+  } catch (error) {
+    if (error instanceof CustomError) {
+      res.status(error.status).json({
+        code: error.code,
+        message: error.message,
+        params: error.params
+      });
+    } else {
+      res.status(500).json({ error: error.message });
     }
-  );
+  }
 });
 
 app.delete('/api/goals/:id', (req, res) => {

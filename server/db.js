@@ -56,7 +56,7 @@ export const db = new sqlite3.Database(dbPath, (err) => {
           id TEXT PRIMARY KEY,
           title TEXT NOT NULL,
           categoryId TEXT NOT NULL,
-          completed BOOLEAN NOT NULL DEFAULT 0,
+          state TEXT NOT NULL DEFAULT 'active',
           createdAt INTEGER NOT NULL,
           FOREIGN KEY(categoryId) REFERENCES categories(id)
         )
