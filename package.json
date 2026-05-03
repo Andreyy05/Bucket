@@ -4,10 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "vite frontend",
+    "build": "tsc -b frontend && vite build frontend",
+    "lint": "eslint frontend",
+    "preview": "vite preview frontend",
+    "server": "node backend/index.js"
   },
   "dependencies": {
     "cors": "^2.8.6",
