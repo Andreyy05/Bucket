@@ -1,62 +1,66 @@
 # Bucket
 
-Bucket je jednoduchá full-stack webová aplikace, která vám pomůže udržet si přehled o vašich životních snech a cílech. Slouží jako takový digitální "bucket list". Můžete si sem zapisovat věci, které chcete zažít, řadit si je do vlastních kategorií a vizuálně sledovat svůj celkový pokrok.
+Bucket je moderní full-stack webová aplikace, která vám pomůže udržet si přehled o vašich životních snech a cílech. Slouží jako digitální "bucket list", kde si můžete zapisovat své touhy, řadit je do kategorií a vizuálně sledovat svůj pokrok pomocí interaktivních grafů.
+
+Aplikace prošla kompletním refaktoringem a nyní využívá robustní backendovou architekturu založenou na vrstvách **DAO** (Data Access Object) a **ABL** (Application Business Logic).
 
 ## Použité technologie
 
-Aplikace je plně oddělená na frontendovou a backendovou část.
+Projekt je rozdělen na čistě oddělený frontend a backend.
 
 **Frontend:**
-- **React 18**: Uživatelské rozhraní
-- **TypeScript**: Typová bezpečnost kódu
-- **Vite**: Rychlé sestavení a vývojový server
-- **Vanilla CSS**: Stylování s důrazem na čistý design a plynulé animace
-- **Lucide React**: Vektorové ikony
+- **React 18**: Uživatelské rozhraní.
+- **TypeScript**: Typová bezpečnost.
+- **Vite**: Rychlý vývojový server a build systém.
+- **Vanilla CSS**: Moderní design (dark mode, skleněný efekt, animace).
+- **Lucide React**: Sada ikon.
 
-**Backend a Databáze:**
-- **Node.js**: Běhové prostředí serveru
-- **Express.js**: Backendový framework pro tvorbu REST API
-- **SQLite3**: Souborová databáze pro bezpečné uložení všech dat
+**Backend:**
+- **Node.js & Express.js**: REST API server.
+- **SQLite3**: Souborová databáze pro ukládání dat.
+- **DAO & ABL Architektura**: Oddělení datového přístupu a byznys logiky.
+- **Validator**: Striktní kontrola vstupních dat (dtoIn) a strukturované chybové hlášky.
 
-## Datový model (Entity a Vztahy)
+## Architektura a Datový model
 
-Aplikace pracuje se dvěma hlavními datovými entitami, které jsou uloženy v SQLite databázi.
+Projekt je organizován jako monorepo:
+- `/frontend`: Obsahuje veškerý kód pro webové rozhraní.
+- `/backend`: Obsahuje serverovou část, logiku a databázi.
 
-### 1. Entita: Kategorie (Category)
-Reprezentuje seskupení cílů podle určitých témat.
-- `id` (Text): Unikátní identifikátor kategorie.
-- `name` (Text): Název kategorie (např. Sport, Cestování).
-- `icon` (Text): Textový identifikátor vizuální ikony.
-- `color` (Text): Hexadecimální kód barvy pro zobrazení v aplikaci.
+### Datové entity
+1. **Kategorie (Category)**: Seskupení cílů (`id`, `name`, `icon`, `color`).
+2. **Cíl (Goal)**: Konkrétní záznam (`id`, `title`, `state`, `categoryId`, `createdAt`).
+   - Atribut `state` nabývá hodnot `active` nebo `completed`.
 
-### 2. Entita: Cíl (Goal)
-Hlavní entita uschovávající informace o konkrétním přání uživatele.
-- `id` (Text): Unikátní identifikátor cíle.
-- `title` (Text): Samotný název nebo popis cíle (např. Vylézt na Sněžku).
-- `completed` (Boolean/Integer): Stav splnění (0 = aktivní, 1 = splněno).
-- `categoryId` (Text): Cizí klíč s vazbou na konkrétní kategorii.
-- `createdAt` (Integer): Časová stopa vytvoření pro správné řazení.
+### Vztahy
+- Vazba **1:N** mezi kategorií a cílem (každý cíl patří do jedné kategorie).
 
-### Vztahy mezi entitami
-- **1:N (Jeden k mnoha)**: Každá *Kategorie* může obsahovat libovolné množství *Cílů*. Každý *Cíl* musí být povinně zařazen právě do jedné *Kategorie* (pomocí atributu `categoryId`).
+## Jak aplikaci spustit
 
-## Jak aplikaci spustit u sebe
+Pro spuštění aplikace potřebujete mít nainstalovaný **Node.js**.
 
-Pokud si chcete aplikaci spustit na svém počítači, stačí dodržet pár kroků. Budete k tomu potřebovat nainstalovaný Node.js.
-
-1. Nejprve si stáhněte repozitář a nainstalujte závislosti. Otevřete terminál ve složce s projektem a napište:
+1. **Instalace závislostí:**
+   V kořenovém adresáři spusťte:
    ```bash
    npm install
    ```
 
-2. Spusťte backendový server, který se stará o práci s databází a API. Zůstane běžet v tomto terminálu:
+2. **Spuštění backendu:**
+   V novém terminálu spusťte server:
    ```bash
-   node server/index.js
+   npm run server
    ```
+   *Server poběží na portu 3000.*
 
-3. Spusťte frontend. Otevřete si druhé (nové) okno terminálu ve stejné složce a spusťte webovou část:
+3. **Spuštění frontendu:**
+   V dalším terminálu spusťte vývojový server pro web:
    ```bash
    npm run dev
    ```
+   *Frontend bude dostupný na http://localhost:5173/.*
 
-Poté už jen otevřete webový prohlížeč a jděte na adresu http://localhost:5173/. Aplikace je připravena k použití a databáze se při prvním spuštění sama inicializuje.
+## API Standardy
+Aplikace využívá standardizované odpovědi pro veškeré operace:
+- Úspěšné seznamy jsou vraceny v objektu `itemList`.
+- V případě chyb (např. neexistující ID, duplicita názvu kategorie) server vrací přehledné chybové kódy (`invalidDtoIn`, `goalDoesNotExist`, atd.).
+- Případná varování o nepodporovaných datech jsou zasílána v objektu `uuAppErrorMap`.
