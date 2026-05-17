@@ -1,13 +1,13 @@
 import React from 'react';
 import type { Category } from '../types';
 
-interface CategoryFilterProps {
+interface FilterBarProps {
   categories: Category[];
   selectedCategoryId: string | null;
   onSelect: (categoryId: string | null) => void;
 }
 
-export const CategoryFilter: React.FC<CategoryFilterProps> = ({ 
+export const FilterBar: React.FC<FilterBarProps> = ({ 
   categories, 
   selectedCategoryId, 
   onSelect 

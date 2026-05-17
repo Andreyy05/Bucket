@@ -82,6 +82,18 @@ class GoalDao {
       });
     });
   }
+
+  async remove(id) {
+    return new Promise((resolve, reject) => {
+      db.run('DELETE FROM goals WHERE id = ?', [id], function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ success: true });
+        }
+      });
+    });
+  }
 }
 
 export default new GoalDao();

@@ -1,17 +1,17 @@
 import React from 'react';
 import { CheckCircle, Circle } from 'lucide-react';
 
-interface ProgressChartProps {
+interface StatisticsCardProps {
   total: number;
   completed: number;
 }
 
-export const ProgressChart: React.FC<ProgressChartProps> = ({ total, completed }) => {
+export const StatisticsCard: React.FC<StatisticsCardProps> = ({ total, completed }) => {
   const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
   const active = total - completed;
 
   // SVG parameters
-  const size = 160;
+  const size = 220;
   const strokeWidth = 24;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
@@ -20,10 +20,6 @@ export const ProgressChart: React.FC<ProgressChartProps> = ({ total, completed }
 
   return (
     <div className="card" style={{ marginBottom: '2rem', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '1.5rem' }}>
-        <h2 style={{ fontSize: '1.25rem', fontWeight: 600 }}>Celkový Progress</h2>
-        <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-main)' }}>{percentage}%</span>
-      </div>
 
       <div style={{ position: 'relative', width: size, height: size, marginBottom: '1.5rem' }}>
         {/* Background Circle (Active - Orange) */}

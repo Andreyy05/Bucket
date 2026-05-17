@@ -3,14 +3,14 @@ import type { Goal, Category } from '../types';
 import { CheckCircle, Circle, Trash2 } from 'lucide-react';
 import * as Icons from 'lucide-react';
 
-interface GoalItemProps {
+interface TargetCardProps {
   goal: Goal;
   category?: Category;
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
-export const GoalItem: React.FC<GoalItemProps> = ({ goal, category, onToggle, onDelete }) => {
+export const TargetCard: React.FC<TargetCardProps> = ({ goal, category, onToggle, onDelete }) => {
   const IconComponent = category ? (Icons as any)[category.icon] : null;
 
   return (
