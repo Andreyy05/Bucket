@@ -2,114 +2,110 @@ import express from 'express';
 import cors from 'cors';
 import { db } from './db.js';
 
+import categoryListAbl from './abl/category/listAbl.js';
+import categoryCreateAbl from './abl/category/createAbl.js';
+import categoryDeleteAbl from './abl/category/deleteAbl.js';
+import listAbl from './abl/goal/listAbl.js';
+import updateAbl from './abl/goal/updateAbl.js';
+import createAbl from './abl/goal/createAbl.js';
+import deleteAbl from './abl/goal/deleteAbl.js';
+import exportAbl from './abl/backup/exportAbl.js';
+import importAbl from './abl/backup/importAbl.js';
+import { CustomError } from './utils/errors.js';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
 
-import categoryListAbl from './abl/category/listAbl.js';
-import categoryCreateAbl from './abl/category/createAbl.js';
-
 // --- CATEGORIES API ---
-app.get('/api/categories', async (req, res) => {
+app.get('/api/categories', async (req, res, next) => {
   try {
-    const response = await categoryListAbl.execute(req.query);
-    res.json(response);
+    res.json(await categoryListAbl.execute(req.query));
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        params: error.params
-      });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    next(error);
   }
 });
 
-app.post('/api/categories', async (req, res) => {
+app.post('/api/categories', async (req, res, next) => {
   try {
-    const response = await categoryCreateAbl.execute(req.body);
-    res.status(201).json(response);
+    res.status(201).json(await categoryCreateAbl.execute(req.body));
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        params: error.params
-      });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    next(error);
   }
 });
 
-import listAbl from './abl/goal/listAbl.js';
-import updateAbl from './abl/goal/updateAbl.js';
-import createAbl from './abl/goal/createAbl.js';
-import { CustomError } from './utils/errors.js';
-
-app.get('/api/goals', async (req, res) => {
+app.delete('/api/categories/:id', async (req, res, next) => {
   try {
-    const response = await listAbl.execute(req.query);
-    res.json(response);
+    res.json(await categoryDeleteAbl.execute({ id: req.params.id }));
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        params: error.params
-      });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    next(error);
   }
 });
 
-app.post('/api/goals', async (req, res) => {
+// --- GOALS API ---
+app.get('/api/goals', async (req, res, next) => {
   try {
-    const response = await createAbl.execute(req.body);
-    res.status(201).json(response);
+    res.json(await listAbl.execute(req.query));
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        params: error.params
-      });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    next(error);
   }
 });
 
-app.put('/api/goals/:id', async (req, res) => {
+app.post('/api/goals', async (req, res, next) => {
   try {
-    const response = await updateAbl.execute({ id: req.params.id, ...req.body });
-    res.json(response);
+    res.status(201).json(await createAbl.execute(req.body));
   } catch (error) {
-    if (error instanceof CustomError) {
-      res.status(error.status).json({
-        code: error.code,
-        message: error.message,
-        params: error.params
-      });
-    } else {
-      res.status(500).json({ error: error.message });
-    }
+    next(error);
   }
 });
 
-app.delete('/api/goals/:id', (req, res) => {
-  const { id } = req.params;
-  db.run('DELETE FROM goals WHERE id = ?', id, function(err) {
-    if (err) {
-      return res.status(500).json({ error: err.message });
-    }
-    res.json({ success: true });
-  });
+app.put('/api/goals/:id', async (req, res, next) => {
+  try {
+    res.json(await updateAbl.execute({ id: req.params.id, ...req.body }));
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete('/api/goals/:id', async (req, res, next) => {
+  try {
+    res.json(await deleteAbl.execute({ id: req.params.id }));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- BACKUP & RESTORE API ---
+app.get('/api/backup/export', async (req, res, next) => {
+  try {
+    res.json(await exportAbl.execute());
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/backup/import', async (req, res, next) => {
+  try {
+    res.json(await importAbl.execute(req.body));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// --- Centrální Error Handler ---
+app.use((err, req, res, next) => {
+  if (err instanceof CustomError) {
+    res.status(err.status).json({
+      code: err.code,
+      message: err.message,
+      params: err.params
+    });
+  } else {
+    console.error('Unhandled error:', err);
+    res.status(500).json({ error: err.message || 'Interní chyba serveru.' });
+  }
 });
 
 app.listen(PORT, () => {

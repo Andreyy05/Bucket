@@ -12,4 +12,5 @@ export const ErrorMap = {
   categoryDoesNotExist: (params) => new CustomError('categoryDoesNotExist', 'Kategorie se zadaným ID nebyla nalezena.', params),
   goalDoesNotExist: (params) => new CustomError('goalDoesNotExist', 'Cíl se zadaným ID nebyl nalezen.', params),
   categoryNameAlreadyExists: (params) => new CustomError('categoryNameAlreadyExists', 'Kategorie s tímto názvem již existuje.', params),
+  categoryHasGoals: (params) => new CustomError('categoryHasGoals', 'Kategorii nelze smazat, protože obsahuje přiřazené cíle.', params),
 };

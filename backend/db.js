@@ -58,9 +58,36 @@ export const db = new sqlite3.Database(dbPath, (err) => {
           categoryId TEXT NOT NULL,
           state TEXT NOT NULL DEFAULT 'active',
           createdAt INTEGER NOT NULL,
+          deadline TEXT,
+          notes TEXT DEFAULT '',
+          priority INTEGER NOT NULL DEFAULT 0,
+          completedAt INTEGER,
+          subtasks TEXT DEFAULT '[]',
+          imageUrl TEXT,
+          budget INTEGER,
+          rating INTEGER,
+          reflection TEXT DEFAULT '',
+          location TEXT DEFAULT '',
           FOREIGN KEY(categoryId) REFERENCES categories(id)
         )
       `);
+
+      // Migrate existing databases — add new columns if missing
+      const migrations = [
+        'ALTER TABLE goals ADD COLUMN deadline TEXT',
+        "ALTER TABLE goals ADD COLUMN notes TEXT DEFAULT ''",
+        'ALTER TABLE goals ADD COLUMN priority INTEGER NOT NULL DEFAULT 0',
+        'ALTER TABLE goals ADD COLUMN completedAt INTEGER',
+        "ALTER TABLE goals ADD COLUMN subtasks TEXT DEFAULT '[]'",
+        'ALTER TABLE goals ADD COLUMN imageUrl TEXT',
+        'ALTER TABLE goals ADD COLUMN budget INTEGER',
+        'ALTER TABLE goals ADD COLUMN rating INTEGER',
+        "ALTER TABLE goals ADD COLUMN reflection TEXT DEFAULT ''",
+        "ALTER TABLE goals ADD COLUMN location TEXT DEFAULT ''"
+      ];
+      migrations.forEach(sql => {
+        db.run(sql, () => {}); // Silently ignore "duplicate column" errors
+      });
     });
   }
 });

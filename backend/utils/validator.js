@@ -28,8 +28,12 @@ export function validateDtoIn(dtoIn, schema) {
 
     if (rules.required && (value === undefined || value === null || value === '')) {
       missingKeyMap[key] = true;
-    } else if (value !== undefined) {
-      if (rules.type === 'string' && typeof value !== 'string') {
+    } else if (value !== undefined && value !== null) {
+      if (rules.type === 'array') {
+        if (!Array.isArray(value)) {
+          invalidTypeKeyMap[key] = typeof value;
+        }
+      } else if (rules.type && typeof value !== rules.type) {
         invalidTypeKeyMap[key] = typeof value;
       }
     }

@@ -53,6 +53,18 @@ class CategoryDao {
       );
     });
   }
+
+  async delete(id) {
+    return new Promise((resolve, reject) => {
+      db.run('DELETE FROM categories WHERE id = ?', [id], function (err) {
+        if (err) {
+          reject(err);
+        } else {
+          resolve({ deletedCount: this.changes });
+        }
+      });
+    });
+  }
 }
 
 export default new CategoryDao();

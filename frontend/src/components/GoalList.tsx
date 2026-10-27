@@ -6,38 +6,46 @@ import { Compass } from 'lucide-react';
 interface GoalListProps {
   goals: Goal[];
   categories: Category[];
+  viewMode?: 'list' | 'board';
   onToggle: (id: string) => void;
   onDelete: (id: string) => void;
+  onUpdate: (id: string, updates: Partial<Goal>) => void;
+  onOpenReflection?: (goal: Goal) => void;
 }
 
-export const GoalList: React.FC<GoalListProps> = ({ goals, categories, onToggle, onDelete }) => {
+export const GoalList: React.FC<GoalListProps> = ({ 
+  goals, 
+  categories, 
+  viewMode = 'list',
+  onToggle, 
+  onDelete, 
+  onUpdate,
+  onOpenReflection
+}) => {
   if (goals.length === 0) {
     return (
       <div className="empty-state">
         <Compass size={48} />
-        <p>Zatím tu nemáte žádné cíle. Přidejte si svůj první sen!</p>
+        <p>Žádné cíle neodpovídají zadaným kritériím.</p>
       </div>
     );
   }
 
-  const sortedGoals = [...goals].sort((a, b) => {
-    if (a.state === b.state) {
-      return b.createdAt - a.createdAt;
-    }
-    return a.state === 'completed' ? 1 : -1;
-  });
-
   return (
-    <div className="goal-list">
-      {sortedGoals.map(goal => {
+    <div className={`goal-list ${viewMode === 'board' ? 'board-view' : ''}`}>
+      {goals.map(goal => {
         const category = categories.find(c => c.id === goal.categoryId);
         return (
           <GoalItem 
             key={goal.id} 
             goal={goal}
             category={category}
+            categories={categories}
+            isBoardView={viewMode === 'board'}
             onToggle={onToggle} 
             onDelete={onDelete} 
+            onUpdate={onUpdate}
+            onOpenReflection={onOpenReflection}
           />
         );
       })}

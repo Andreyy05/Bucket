@@ -8,7 +8,16 @@ class CreateAbl {
   constructor() {
     this.schema = {
       title: { type: 'string', required: true },
-      categoryId: { type: 'string', required: true }
+      categoryId: { type: 'string', required: true },
+      deadline: { type: 'string', required: false },
+      notes: { type: 'string', required: false },
+      priority: { type: 'number', required: false },
+      subtasks: { type: 'array', required: false },
+      imageUrl: { type: 'string', required: false },
+      budget: { type: 'number', required: false },
+      rating: { type: 'number', required: false },
+      reflection: { type: 'string', required: false },
+      location: { type: 'string', required: false }
     };
   }
 
@@ -30,8 +39,17 @@ class CreateAbl {
       id: uuidv4(),
       title: dtoIn.title,
       categoryId: dtoIn.categoryId,
-      state: 'active', // default state according to schema
-      createdAt: Date.now()
+      state: 'active',
+      createdAt: Date.now(),
+      deadline: dtoIn.deadline || null,
+      notes: dtoIn.notes || '',
+      priority: dtoIn.priority || 0,
+      subtasks: dtoIn.subtasks || [],
+      imageUrl: dtoIn.imageUrl || null,
+      budget: dtoIn.budget !== undefined ? dtoIn.budget : null,
+      rating: dtoIn.rating !== undefined ? dtoIn.rating : null,
+      reflection: dtoIn.reflection || '',
+      location: dtoIn.location || ''
     };
 
     const createdGoal = await goalDao.create(newGoal);
